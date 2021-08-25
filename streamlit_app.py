@@ -39,7 +39,7 @@ def fetch_records(Session, EnterpriseNumber:str):
     if rows:
         return rows
     else:
-        return False
+        raise Exception
 
 def fetch_key(Session, input_rows, type_of_address:str):
 
@@ -74,7 +74,7 @@ def fetch_key(Session, input_rows, type_of_address:str):
         return key
 
     else:
-        return False
+        raise Exception
 
 def fetch_batch(Session):
 
