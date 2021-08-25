@@ -1,6 +1,6 @@
 import datetime
 
-def generate_key(columns: list, settings: dict) -> str:
+def generate_key(columns: list, settings: dict) -> dict:
   '''
     Concatenate timestamp and unicode modulo
   '''
