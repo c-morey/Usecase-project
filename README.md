@@ -5,7 +5,7 @@ This use-case project is provided by a private digital innovation company in fin
 **Success criterias:**  
 *The average key generation time is expected to be less than 10 ms.* <br>
 *The results should be verifiable by direct queries on the database.* <br>
-*Optimal energy use while sustaining a high performance.*
+*There should be optimal energy use while sustaining a high performance.*
 
 ----------
 ### Project Guidelines
