@@ -5,26 +5,29 @@ def check_reference_date(input: datetime):
     Check if given reference date format is correct. If not, raise exception.
     '''
     try:
-        datetime.strptime(input,'%d %b %Y')
+        date = datetime.strptime(input,'%d %b %Y')
     except:
-        raise Exception("Invalid datetime format.")
+        raise Exception("Invalid datetime format")
+    now = datetime.now()
+    if date > now:
+      raise Exception ("Reference Date is in the future")
 
 def check_time_precision_format(input: str):
     '''
     Check if given precision format is correct. If not, raise exception.
     '''
-    valid_format = ['hh','hh:mm','hh:mm:ss','hh:mm:ss.0','hh:mm:ss.00','hh:mm:ss.000']
+    valid_format = ['hh:mm:ss','hh:mm:ss.0','hh:mm:ss.00','hh:mm:ss.000']
     if input not in valid_format:
-        raise Exception("Invalid time precision format.")
+        raise Exception("Invalid time precision format")
 
 def check_algorithm_basis(input: int):
     '''
     Check if given algorithm basis is correct. It shoudl be an int type, bigger than 0 and less than 1e6. If not, raise exception.
     '''
-    if type(input) == int and 0 <= input <= 1000000:
-        return True
-    else:
-        raise Exception("Invalid algorithm basis.")
+    if type(input) != int:
+        raise Exception("Algorithm basis must be an integer")
+    elif input < 0 or input > 10 ** 6:
+      raise Exception("Algorithm basis value must be stricly positive and shorter than 10e6")
 
 def check_address_priority(input: str):
     '''
@@ -41,7 +44,7 @@ def check_fields(input: str):
     fields = ['EnterpriseNumber','Denomination']
     for element in input:
         if element not in fields:
-            raise Exception("Invalid field.")
+            raise Exception("Invalid fields")
 
 def check_params(parameters: dict):
     '''
@@ -49,19 +52,11 @@ def check_params(parameters: dict):
     :param parameters: dict of user input
     :return: No return
     '''
-    check_time_precision_format(parameters.get('Time precision'))
-    check_reference_date(parameters.get('Reference date'))
-    check_algorithm_basis(parameters.get('Algorithm basis'))
-    check_address_priority(parameters.get('Type of address priority'))
-    check_fields(parameters.get('Selected fields'))
-
-
-parameters =  {'Algorithm basis': 3333, 'Reference date': '08 Jul 1969',
-    'Time precision': 'hh:mm:ss.000', 'Type of address priority': 'REGO',
-    'Selected fields': ['EnterpriseNumber', 'Denomination']}
-
-check_params(parameters)
-
+    check_time_precision_format(parameters.get('time_precision'))
+    check_reference_date(parameters.get('reference_date'))
+    check_algorithm_basis(parameters.get('algorithm_basis'))
+    check_address_priority(parameters.get('type_of_address_priority'))
+    check_fields(parameters.get('selected_fields'))
 
 
 
