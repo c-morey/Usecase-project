@@ -20,7 +20,7 @@ The dataset for this project is the list of all active companies in Belgium. It 
 
 - [x] **Python**: The main back-end programming language of this project.
 - [X] **MySQL:** An open-source relational database management system.
-- [X] **Streamlit:** An open-source app framework for data science teams.It is used to showcase the end project result.
+- [X] **Streamlit:** An open-source app framework for data science teams.It is used to showcase the end result.
 
 
 
