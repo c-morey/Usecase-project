@@ -29,10 +29,39 @@ def parameters():
     # Save data to .json
     with open('./params.json', 'w') as io:
         json.dump(data, io)
-    # Execute key generation
-    column = ['0200.065.765', 'Intergemeentelijke Vereniging Veneco'] # This info should come from DB
-    print(generate_key(column, data)) # This should be saved in DB
     return {"status": "Params saved"}
+
+@app.route('/process', methods=['POST'])
+def process():
+  with open('./params.json', 'r') as io:
+    params = json.load(io)
+
+  # Execute key generation (get batch)
+  columns = ['0200.065.765', 'Intergemeentelijke Vereniging Veneco'] # This info should come from DB
+  print(generate_key(columns, params)) # This should be saved in DB
+  # Write batch (save the keys in table)
+  return {}
+
+@app.route('/results', methods=['GET', 'POST'])
+def review_results():
+  if request.method == 'GET':
+    return {'results': "Ask for Entreprise Number"}
+  elif request.method == 'POST':
+    try:
+      data = request.get_json()
+      data = data['number']
+      # Requests matching enterprise numbers, returns matching key
+      '''
+      return
+        {
+          'inputs': []
+          'output': key
+        }
+      '''
+    except Exception as e:
+      return {"error": str(e)}, 400
+    except:
+      return {"error": "An unexpected error occured"}, 400
 
 
 if __name__ == '__main__':

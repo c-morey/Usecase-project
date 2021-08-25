@@ -1,1 +1,1 @@
-{"type_of_address_priority": "REGO", "algorithm_basis": 3333, "selected_fields": ["EnterpriseNumber", "Denomination"], "time_precision": "hh:mm:ss.000", "reference_date": "08 Jul 1970"}
+{"type_of_address_priority": "REGO", "algorithm_basis": 9999, "selected_fields": ["EnterpriseNumber", "Denomination"], "time_precision": "hh:mm:ss.000", "reference_date": "08 Jul 1970"}

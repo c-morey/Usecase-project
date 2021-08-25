@@ -4,6 +4,8 @@ def generate_key(columns: list, settings: dict) -> str:
   '''
     Concatenate timestamp and unicode modulo
   '''
+  index = columns[0]
+  columns = columns[1:]
   now = datetime.datetime.now()
 
   key = str(get_timestamp(datetime.datetime.strptime(settings.get('reference_date'), '%d %b %Y'), \
@@ -11,7 +13,7 @@ def generate_key(columns: list, settings: dict) -> str:
   for column in columns:
     key += get_modulo(to_unicode(column), settings.get('algorithm_basis'))
 
-  return key
+  return {'id': index, 'algo_key': key}
 
 def to_unicode(string: str) -> int:
   '''
