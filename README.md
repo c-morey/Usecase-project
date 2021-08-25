@@ -2,9 +2,8 @@
 
 This use-case project is provided by a digital innovation company in finance. The purpose is to build a key that consists of a sequence of characters that can be used in generic processes to anonymously identify a company.
 
-### Project Guidelines
-
 ----------
+### Project Guidelines
 - Repository: `key-building-algorithm`
 - Type of Challenge: `Learning & Consolidation `
 - Duration: `3 days`
