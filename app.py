@@ -58,11 +58,15 @@ def review_results():
       data = request.get_json()
       enterprise_number = data['number']
       inputs = fetch_records(Session, enterprise_number)
-      output = fetch_key(Session, inputs, params['type_of_address_priority'])
-      return {
-          'inputs': inputs,
-          'output': output
+      output = [str(x) for x in fetch_key(Session, inputs, params['type_of_address_priority'])]
+      records = [str(x) for x in inputs]
+      results = {
+          'inputs': records,
+          'output': output[1]
         }
+      print(type(results['output'][1]))
+      results = json.dumps(results)
+      return results
 
     except Exception as e:
       return {"error": str(e)}, 400
