@@ -1,9 +1,12 @@
 import os
 import json
 from flask import Flask, request
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from utils.key_generation import generate_key
 from utils.param_validation import check_params
+from utils.db_connections import Session, write_batch, fetch_batch, fetch_key, fetch_records, reset_results
 
 app = Flask(__name__)
 
@@ -37,9 +40,11 @@ def process():
     params = json.load(io)
 
   # Execute key generation (get batch)
-  columns = ['0200.065.765', 'Intergemeentelijke Vereniging Veneco'] # This info should come from DB
-  print(generate_key(columns, params)) # This should be saved in DB
-  # Write batch (save the keys in table)
+  batch = fetch_batch(Session)
+  results = []
+  for columns in batch:
+    results.append(generate_key(columns, params)) # This should be saved in DB
+  write_batch(results)
   return {}
 
 @app.route('/results', methods=['GET', 'POST'])
@@ -48,16 +53,17 @@ def review_results():
     return {'results': "Ask for Entreprise Number"}
   elif request.method == 'POST':
     try:
+      with open('./params.json', 'r') as io:
+        params = json.load(io)
       data = request.get_json()
-      data = data['number']
-      # Requests matching enterprise numbers, returns matching key
-      '''
-      return
-        {
-          'inputs': []
-          'output': key
+      enterprise_number = data['number']
+      inputs = fetch_records(Session, enterprise_number)
+      output = fetch_key(Session, inputs, params['type_of_address_priority'])
+      return {
+          'inputs': inputs,
+          'output': output
         }
-      '''
+
     except Exception as e:
       return {"error": str(e)}, 400
     except:
