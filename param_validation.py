@@ -1,49 +1,49 @@
 from datetime import datetime
 
-def check_reference_date(input):
+def check_reference_date(input: datetime):
     '''
-    Function to check if given reference date format is correct. If not, raise exception.
+    Check if given reference date format is correct. If not, raise exception.
     '''
     try:
         datetime.strptime(input,'%d %b %Y')
     except:
         raise Exception("Invalid datetime format.")
 
-def check_time_precision_format(input):
+def check_time_precision_format(input: str):
     '''
-    Function to check if given precision format is correct. If not, raise exception.
+    Check if given precision format is correct. If not, raise exception.
     '''
     valid_format = ['hh','hh:mm','hh:mm:ss','hh:mm:ss.0','hh:mm:ss.00','hh:mm:ss.000']
     if input not in valid_format:
         raise Exception("Invalid time precision format.")
 
-def check_algorithm_basis(input):
+def check_algorithm_basis(input: int):
     '''
-    Function to check if given algorithm basis is correct. It shoudl be an int type, bigger than 0 and less than 1e6. If not, raise exception.
+    Check if given algorithm basis is correct. It shoudl be an int type, bigger than 0 and less than 1e6. If not, raise exception.
     '''
     if type(input) == int and 0 <= input <= 1000000:
         return True
     else:
         raise Exception("Invalid algorithm basis.")
 
-def check_address_priority(input):
+def check_address_priority(input: str):
     '''
-    Function to check if given type of address is correct. If not, raise exception.
+    Check if given type of address is correct. If not, raise exception.
     '''
     type_of_address = ['REGO', 'ABBR']
     if input not in type_of_address:
         raise Exception("Invalid address priority")
 
-def check_fields(input):
+def check_fields(input: str):
     '''
-    Function to check if selected fields is inside the available fields list. If not, raise exception.
+    Check if selected fields is inside the available fields list. If not, raise exception.
     '''
     fields = ['EnterpriseNumber','Denomination']
     for element in input:
         if element not in fields:
             raise Exception("Invalid field.")
 
-def check_params(parameters):
+def check_params(parameters: dict):
     '''
     The main function that will run each parameter validation.
     :param parameters: dict of user input
