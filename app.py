@@ -1,11 +1,14 @@
 import os
 import json
+import math
 import time
 from flask import Flask, request
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
-from utils.key_generation import generate_key
+from utils.key_generation import generate_key, ProcThread
 from utils.param_validation import check_params
-from utils.db_connections import Session, write_batch, fetch_batch, fetch_key, fetch_records, reset_results
+from utils.db_connections import Session, write_batch, fetch_batch, fetch_key, fetch_records, reset_results, check_results
 
 app = Flask(__name__)
 
@@ -39,14 +42,42 @@ def process():
   with open('./params.json', 'r') as io:
     params = json.load(io)
 
+  # batch = fetch_batch(Session)
   # Execute key generation (get batch)
-  batch = fetch_batch(Session)
+  # for columns in batch:
+  #   results.append(generate_key(columns, params))
+  # write_batch(results)
+
+  db_length = 2e6
+  offset = check_results(Session)
+  n_iter = math.ceil((db_length - offset) / 50000) # This gives the number of 50000-batch necessary to process the remaining data
+
   results = []
-  for columns in batch:
-    results.append(generate_key(columns, params)) # This should be saved in DB
+  threads = []
+
+  for i in range(1,3,1):
+    batch = fetch_batch(Session, batch_number=i, offset=offset)
+    t = ProcThread(name='thread_{}'.format(i), target=generate_key, args=((batch,params),))
+    t.start()
+    threads.append(t)
+
+  print(time.time() - start)
+
+  for thread in threads:
+    while thread.is_alive():
+      time.sleep(0.5)
+    results.extend(thread.data)
+
+  print(time.time() - start)
+  print(len(results))
   write_batch(results)
   end = time.perf_counter()
   return {"status": f"Keys generated in {end - start:.3f}s"}
+
+@app.route('/reset', methods=['GET'])
+def reset_table():
+  reset_results(Session)
+  return {'migration_status': "Table results successfully reset"}
 
 @app.route('/results', methods=['GET', 'POST'])
 def review_results():
@@ -73,8 +104,6 @@ def review_results():
       return {"error": str(e)}, 400
     except:
       return {"error": "An unexpected error occured"}, 400
-
-# Add route to delete key records 
 
 
 if __name__ == '__main__':

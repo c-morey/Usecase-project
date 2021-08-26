@@ -39,7 +39,7 @@ def fetch_records(Session, EnterpriseNumber:str):
     if rows:
         return rows
     else:
-        raise Exception
+        raise Exception("This EnterpriseNumber could not be found in the Database")
 
 def fetch_key(Session, input_rows, type_of_address:str):
 
@@ -74,13 +74,11 @@ def fetch_key(Session, input_rows, type_of_address:str):
         return key
 
     else:
-        raise Exception
+        raise Exception("The key for this record has not been generated yet")
 
-def fetch_batch(Session):
+def fetch_batch(Session, batch_number=1, offset=0):
 
-    check_session = Session()
-    last_id = _check_results(check_session)
-    check_session.close()
+    floor = offset + ((batch_number-1) * 50000)
 
     fetch_session = Session()
 
@@ -88,7 +86,7 @@ def fetch_batch(Session):
     meta.reflect(bind=engine)
     data = meta.tables['data']
 
-    stmnt = select(data).where(data.c.id > last_id).limit(50000)
+    stmnt = select(data).where(floor < data.c.id).limit(50000)
 
     batch = fetch_session.execute(stmnt).all()
 
@@ -96,8 +94,9 @@ def fetch_batch(Session):
 
     return batch
 
-def _check_results(check_session):
+def check_results(Session):
 
+    check_session = Session()
     meta = MetaData()
     meta.reflect(bind=engine)
     results = meta.tables['results']
@@ -106,10 +105,10 @@ def _check_results(check_session):
         last_id = check_session.execute(get_last_id).scalar_one()
     except:
         last_id = 0
-
+    check_session.close()
     return last_id
 
-def reset_results(Session, length_of_key):
+def reset_results(Session, length_of_key=66):
 
     meta = MetaData()
     meta.reflect(bind=engine)
