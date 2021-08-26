@@ -39,7 +39,7 @@ def fetch_records(Session, EnterpriseNumber:str):
     if rows:
         return rows
     else:
-        raise Exception
+        raise Exception("This EnterpriseNumber could not be found in the Database")
 
 def fetch_key(Session, input_rows, type_of_address:str):
 
@@ -74,7 +74,7 @@ def fetch_key(Session, input_rows, type_of_address:str):
         return key
 
     else:
-        raise Exception
+        raise Exception("The key for this record has not been generated yet")
 
 def fetch_batch(Session, batch_number=1, offset=0):
 
@@ -108,7 +108,7 @@ def check_results(Session):
     check_session.close()
     return last_id
 
-def reset_results(Session, length_of_key):
+def reset_results(Session, length_of_key=66):
 
     meta = MetaData()
     meta.reflect(bind=engine)

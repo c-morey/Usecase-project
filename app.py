@@ -34,11 +34,12 @@ def parameters():
     # Save data to .json
     with open('./params.json', 'w') as io:
         json.dump(data, io)
+    reset_results(Session)
     return {"status": "Params saved"}
 
-@app.route('/process', methods=['POST'])
+@app.route('/process', methods=['GET'])
 def process():
-  start = time.time()
+  start = time.perf_counter()
   with open('./params.json', 'r') as io:
     params = json.load(io)
 
@@ -71,8 +72,13 @@ def process():
   print(time.time() - start)
   print(len(results))
   write_batch(results)
-  print(time.time() - start)
-  return {}
+  end = time.perf_counter()
+  return {"status": f"Keys generated in {end - start:.3f}s"}
+
+@app.route('/reset', methods=['GET'])
+def reset_table():
+  reset_results(Session)
+  return {'migration_status': "Table results successfully reset"}
 
 @app.route('/results', methods=['GET', 'POST'])
 def review_results():
