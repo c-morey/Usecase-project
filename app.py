@@ -34,10 +34,9 @@ def parameters():
     # Save data to .json
     with open('./params.json', 'w') as io:
         json.dump(data, io)
-    reset_results(Session)
     return {"status": "Params saved"}
 
-@app.route('/process', methods=['GET'])
+@app.route('/process', methods=['POST'])
 def process():
   start = time.perf_counter()
   with open('./params.json', 'r') as io:
