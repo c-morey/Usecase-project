@@ -5,6 +5,7 @@ import time
 from flask import Flask, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import OperationalError
 
 from utils.key_generation import generate_key, ProcThread
 from utils.param_validation import check_params
@@ -36,7 +37,7 @@ def parameters():
         json.dump(data, io)
     return {"status": "Params saved"}
 
-@app.route('/process', methods=['POST'])
+@app.route('/process', methods=['GET'])
 def process():
   start = time.perf_counter()
   with open('./params.json', 'r') as io:
@@ -48,25 +49,30 @@ def process():
   #   results.append(generate_key(columns, params))
   # write_batch(results)
 
-  db_length = 2e6
-  offset = check_results(Session)
-  n_iter = math.ceil((db_length - offset) / 50000) # This gives the number of 50000-batch necessary to process the remaining data
+  try:
+    db_length = 2e6
+    offset = check_results(Session)
+    n_iter = math.ceil((db_length - offset) / 50000) # This gives the number of 50000-batch necessary to process the remaining data
 
-  results = []
-  threads = []
+    results = []
+    threads = []
 
-  for i in range(1,3,1):
-    batch = fetch_batch(Session, batch_number=i, offset=offset)
-    t = ProcThread(name='thread_{}'.format(i), target=generate_key, args=((batch,params),))
-    t.start()
-    threads.append(t)
+    for i in range(1,n_iter,1):
+      batch = fetch_batch(Session, batch_number=i, offset=offset)
+      t = ProcThread(name='thread_{}'.format(i), target=generate_key, args=((batch,params),))
+      t.start()
+      threads.append(t)
 
-  print(time.time() - start)
+    print(time.time() - start)
 
-  for thread in threads:
-    while thread.is_alive():
-      time.sleep(0.5)
-    results.extend(thread.data)
+    for thread in threads:
+      while thread.is_alive():
+        time.sleep(0.5)
+      results.extend(thread.data)
+  except OperationalError as e:
+    return {'error': str(e)}, 400
+  except:
+    return {"error": "An unexpected error occured"}, 400
 
   print(time.time() - start)
   print(len(results))
@@ -76,7 +82,12 @@ def process():
 
 @app.route('/reset', methods=['GET'])
 def reset_table():
-  reset_results(Session)
+  try:
+    reset_results(Session)
+  except OperationalError as e:
+    return {'error': str(e)}, 400
+  except:
+    return {"error": "An unexpected error occured"}, 400
   return {'migration_status': "Table results successfully reset"}
 
 @app.route('/results', methods=['GET', 'POST'])
@@ -102,6 +113,8 @@ def review_results():
 
     except Exception as e:
       return {"error": str(e)}, 400
+    except OperationalError as e:
+      return {'error': str(e)}, 400
     except:
       return {"error": "An unexpected error occured"}, 400
 
