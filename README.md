@@ -20,19 +20,19 @@ This use-case project is provided by a private digital innovation company in fin
 The dataset for this project is the list of all active companies in Belgium. It has about 1.9 million records and stored in MySQL database.
 
 --------
-### Technologies
-
-- [x] **Python**: The main back-end programming language of this project.
-- [X] **MySQL:** An open-source relational database management system.
-- [x] **Docker**: An open platform for developing, shipping, and running applications. A docker image will be created to share with the customers.
-- [X] **Streamlit:** An open-source app framework for data science teams.It is used to showcase the end result.
-
 ### Prerequisites
 
+- [x] **Python3**: The main back-end programming language of this project. 
+- [X] **MySQL:** An open-source relational database management system.
+
 ### Installation
-
+```
+git clone https://github.com/c-morey/Usecase-project.git
+cd Usecase-project
+pip install -r requirements.txt 
+```
 ### Usage
-
+`python app.py`
 ### Contributors
 - [Camille De Neef](https://github.com/kaygu)
 - [Ceren Mörey](https://github.com/c-morey) 
