@@ -3,8 +3,6 @@ import json
 import math
 import time
 from flask import Flask, request
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from utils.key_generation import generate_key, ProcThread
 from utils.param_validation import check_params
@@ -38,7 +36,7 @@ def parameters():
 
 @app.route('/process', methods=['POST'])
 def process():
-  start = time.time()
+  start = time.perf_counter()
   with open('./params.json', 'r') as io:
     params = json.load(io)
 
@@ -71,8 +69,10 @@ def process():
   print(time.time() - start)
   print(len(results))
   write_batch(results)
-  print(time.time() - start)
+  print(end = time.perf_counter() - start)
   return {}
+
+  
 
 @app.route('/results', methods=['GET', 'POST'])
 def review_results():
@@ -99,6 +99,8 @@ def review_results():
       return {"error": str(e)}, 400
     except:
       return {"error": "An unexpected error occured"}, 400
+
+# Add route to delete key records 
 
 
 if __name__ == '__main__':
