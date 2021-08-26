@@ -1,4 +1,27 @@
 import datetime
+from threading import Thread
+
+class ProcThread(Thread):
+  '''
+  This class defines a classic thread targetting a function. The only differences are:
+  | 1) It relies on try statement so as not to break if the target function breaks
+  | 2) It stores the returned values of the target function in a .data attribute
+  '''
+
+  def __init__(self, group=None, target=None, name=None, args=(), kwargs={}):
+    Thread.__init__(self, group, target, name, args)
+    self.data = []
+    self._target = target
+    self._args = args
+    self._kwargs = kwargs
+
+  def run(self):
+    for batch, params in self._args:
+      for columns in batch:
+        try:
+          self.data.append(self._target(columns, params))
+        except:
+          raise Exception('Key generation failed')
 
 def generate_key(columns: list, settings: dict) -> dict:
   '''
